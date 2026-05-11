@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "pull-assets": "for repo in audio-system core-engine design-docs game-logic input-system obstacle-entity physics-system player-entity ui-system; do echo \"Updating $repo...\"; (cd ../$repo && git pull origin main || git pull origin master); done"
   },
   "dependencies": {
     "three": "^0.170.0"

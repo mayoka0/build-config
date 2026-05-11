@@ -16,6 +16,21 @@
         <p id="final-score">SCORE: 0</p>
         <button class="btn" onclick="location.reload()">REBOOT</button>
     </div>
+    <script src="https://mrdoob.github.io/stats.js/build/stats.min.js"></script>
+    <script>
+        const stats = new Stats();
+        stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+        stats.dom.style.position = 'absolute';
+        stats.dom.style.left = '10px';
+        stats.dom.style.top = '10px';
+        document.body.appendChild(stats.dom);
+        
+        function updateStats() {
+            stats.update();
+            requestAnimationFrame(updateStats);
+        }
+        requestAnimationFrame(updateStats);
+    </script>
     <script type="module" src="/main.js"></script>
 </body>
 </html>
