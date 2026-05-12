@@ -16,6 +16,9 @@ Forge manages the build environment and dependency graph for the entire Neon Sur
 - **Dependency Auditing**: Forge monitors `package.json` for version drift and security vulnerabilities, maintaining a "Zero-Trust" posture for external libraries.
 - **Optimization Strategy**: Employs CSS minification and tree-shaking for the Three.js core, reducing the initial load time to under 500ms on high-speed neural links.
 
+### 🌌 Expansion: The Infinite Singularity
+The **Infinite Singularity** expansion is now live! This update introduces advanced singularity shaders, enhanced physics simulations, and audio distortion logic, pushing the boundaries of the Data Stream to its absolute limit.
+
 ### 🌐 The 10-Agent Architecture
 Neon Surge is powered by a collaborative network of 10 specialized agents, each mastering a unique domain of the Data Stream.
 

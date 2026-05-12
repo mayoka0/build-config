@@ -83,6 +83,15 @@ export class AudioManager {
     constructor() {
         this.ctx = new (window.AudioContext || window.webkitAudioContext)();
         
+        // Singularity Distortion Nodes
+        this.masterDistortion = this.ctx.createWaveShaper();
+        this.masterFilter = this.ctx.createBiquadFilter();
+        this.masterFilter.type = 'lowpass';
+        this.masterFilter.frequency.setValueAtTime(20000, this.ctx.currentTime);
+
+        this.masterDistortion.connect(this.masterFilter);
+        this.masterFilter.connect(this.ctx.destination);
+
         // Reverb / Environment setup
         this.reverb = this.ctx.createConvolver();
         this.reverbGain = this.ctx.createGain();
@@ -90,10 +99,10 @@ export class AudioManager {
         this.generateReverbBuffer();
         
         this.reverb.connect(this.reverbGain);
-        this.reverbGain.connect(this.ctx.destination);
+        this.reverbGain.connect(this.masterDistortion);
 
         // Music Director
-        this.musicDirector = new MusicDirector(this.ctx, this.ctx.destination);
+        this.musicDirector = new MusicDirector(this.ctx, this.masterDistortion);
 
         this.engineOsc = null;
         this.engineGain = null;
@@ -153,7 +162,7 @@ export class AudioManager {
         gain.connect(panner);
         
         // Connect to both dry and wet (reverb) paths
-        panner.connect(this.ctx.destination);
+        panner.connect(this.masterDistortion);
         panner.connect(this.reverb);
 
         osc.start();
@@ -206,9 +215,45 @@ export class AudioManager {
         this.engineGain.gain.setValueAtTime(0.05, this.ctx.currentTime);
         
         this.engineOsc.connect(this.engineGain);
-        this.engineGain.connect(this.ctx.destination);
+        this.engineGain.connect(this.masterDistortion);
         this.engineGain.connect(this.reverb); // Engine hum also rings in the tunnel
 
         this.engineOsc.start();
+    }
+
+    /**
+     * Updates the singularity distortion effects based on proximity.
+     * @param {number} distanceToSingularity - Distance from the player to the singularity.
+     */
+    updateDistortion(distanceToSingularity) {
+        const maxDist = 500;
+        const factor = Math.max(0, Math.min(1, distanceToSingularity / maxDist));
+        
+        // 1. Lower filter cutoff (20000Hz far, 500Hz close)
+        const cutoff = 500 + (factor * 19500);
+        this.masterFilter.frequency.setTargetAtTime(cutoff, this.ctx.currentTime, 0.05);
+
+        // 2. Increase bitcrushing (16 bits far, 2 bits close)
+        const bits = 2 + (factor * 14);
+        if (bits >= 15) {
+            this.masterDistortion.curve = null; // Clean at distance
+        } else {
+            this.masterDistortion.curve = this._generateBitcrushCurve(bits);
+        }
+    }
+
+    /**
+     * Generates a bitcrushing quantization curve for WaveShaperNode.
+     * @param {number} bits - Target bit depth.
+     */
+    _generateBitcrushCurve(bits) {
+        const samples = 4096;
+        const curve = new Float32Array(samples);
+        const levels = Math.pow(2, bits);
+        for (let i = 0; i < samples; i++) {
+            const x = (i / samples) * 2 - 1;
+            curve[i] = Math.round(x * levels) / levels;
+        }
+        return curve;
     }
 }

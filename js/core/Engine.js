@@ -43,6 +43,10 @@ export class Engine {
         // Pulsing Light Setup
         this.setupPulsingLight();
 
+        // Singularity Core Setup
+        this.singularityIntensity = 1.0;
+        this.createSingularity();
+
         // Post-Processing Pipeline
         this.initPostProcessing();
 
@@ -72,6 +76,64 @@ export class Engine {
         this.on('beat', () => {
             this.currentPulseIntensity = 500;
         });
+    }
+
+    /**
+     * Creates the Singularity core at the edge of the scene.
+     * Uses an Icosahedron with a custom shader for a "black hole" effect.
+     */
+    createSingularity() {
+        const geometry = new THREE.IcosahedronGeometry(100, 20);
+        
+        this.singularityMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                time: { value: 0.0 },
+                intensity: { value: 1.0 }
+            },
+            vertexShader: `
+                varying vec3 vNormal;
+                varying vec3 vViewPosition;
+                void main() {
+                    vNormal = normalize(normalMatrix * normal);
+                    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                    vViewPosition = -mvPosition.xyz;
+                    gl_Position = projectionMatrix * mvPosition;
+                }
+            `,
+            fragmentShader: `
+                uniform float time;
+                uniform float intensity;
+                varying vec3 vNormal;
+                varying vec3 vViewPosition;
+                void main() {
+                    vec3 normal = normalize(vNormal);
+                    vec3 viewDir = normalize(vViewPosition);
+                    float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 3.0);
+                    
+                    // Event horizon glow
+                    vec3 glowColor = vec3(0.6, 0.1, 0.9); // Deep purple
+                    vec3 color = glowColor * fresnel * intensity;
+                    
+                    // Pulsating rim
+                    color += 0.2 * vec3(0.2, 0.5, 1.0) * (sin(time * 2.0) * 0.5 + 0.5) * fresnel;
+                    
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            `,
+            transparent: true,
+            side: THREE.BackSide,
+            blending: THREE.AdditiveBlending
+        });
+
+        this.singularity = new THREE.Mesh(geometry, this.singularityMaterial);
+        this.singularity.position.set(0, 0, -500);
+        this.scene.add(this.singularity);
+
+        // Add an inner dark sphere for the "black hole" center
+        const innerGeo = new THREE.SphereGeometry(95, 32, 32);
+        const innerMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        const blackHole = new THREE.Mesh(innerGeo, innerMat);
+        this.singularity.add(blackHole);
     }
 
     /**
@@ -145,16 +207,29 @@ export class Engine {
      */
     updateEngine() {
         const deltaTime = this.clock.getDelta();
+        const time = this.clock.getElapsedTime();
 
-        // Pulse intensity decay
+        // Pulse intensity decay for point light
         if (this.currentPulseIntensity > 0) {
-            this.currentPulseIntensity *= 0.92; // Decay over time
+            this.currentPulseIntensity *= 0.92;
         }
         this.pulsingLight.intensity = this.baseIntensity + this.currentPulseIntensity;
         
-        // Subtle color pulsing/shifting
-        const time = this.clock.getElapsedTime();
+        // Subtle color pulsing/shifting for point light
         this.pulsingLight.color.setHSL((time * 0.1) % 1, 1, 0.5);
+
+        // Update Singularity
+        if (this.singularityMaterial) {
+            this.singularityMaterial.uniforms.time.value = time;
+            
+            // Apply a base pulsation to singularityIntensity if not modified externally
+            const pulse = Math.sin(time * 0.5) * 0.2 + 1.0;
+            this.singularityMaterial.uniforms.intensity.value = this.singularityIntensity * pulse;
+            
+            // Subtle rotation
+            this.singularity.rotation.y += deltaTime * 0.1;
+            this.singularity.rotation.z += deltaTime * 0.05;
+        }
     }
 
     /**
