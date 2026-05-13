@@ -10,30 +10,16 @@
 *   **Production Hardening**: Utilizes advanced Rollup and esbuild configurations to purge "dead code" and optimize the Three.js rendering pipeline.
 
 ### 🛠️ Technical Spec
-Forge manages the build environment and dependency graph for the entire Neon Surge ecosystem.
-- **Bundler Engine**: Leverages **Vite** as the primary development server and **Rollup** for production-grade ESM bundling.
-- **Asset Processing**: Implements `esbuild` for ultra-fast transpilation, ensuring that even large-scale geometric computations are ready in milliseconds.
-- **Dependency Auditing**: Forge monitors `package.json` for version drift and security vulnerabilities, maintaining a "Zero-Trust" posture for external libraries.
-- **Optimization Strategy**: Employs CSS minification and tree-shaking for the Three.js core, reducing the initial load time to under 500ms on high-speed neural links.
+Forge manages the build environment and dependency graph for the entire Neon Surge ecosystem, acting as the industrial heart of the Data Stream.
 
-### 🌌 Expansion: The Infinite Singularity
-The **Infinite Singularity** expansion is now live! This update introduces advanced singularity shaders, enhanced physics simulations, and audio distortion logic, pushing the boundaries of the Data Stream to its absolute limit.
+- **Vite-Powered Development**: Utilizes **Vite** for instantaneous Hot Module Replacement (HMR). This allows agents to modify geometric shaders or game logic and see the results in the Grid without a full reload.
+- **Rollup & Tree-Shaking**: The production pipeline is built on **Rollup**, configured with aggressive tree-shaking for the Three.js library. This ensures that only the specific geometries and materials used in the simulation are bundled, minimizing the "digital footprint" of the app.
+- **Automated Asset Siphoning**: Implements a custom `pull-assets` protocol that gathers artifacts from all 10 sub-repositories and assembles them into a cohesive `/dist` directory.
+- **Environment Virtualization**: Manages different build targets (Development, Staging, Production) through structured `.env` injection, allowing the Grid to run in "Debug Mode" with verbose telemetry or "Stealth Mode" for optimized performance.
+- **Dependency Hardening**: Forge conducts automated audits of the `package.json` manifest, ensuring that all 10 agents are using compatible versions of the core engine and preventing "dependency hell" within the ecosystem.
+- **Performance Budgeting**: Enforces strict bundle size limits (e.g., < 1MB for the core bundle) to ensure the simulation loads instantly on any neural-link connection.
 
-### 🌐 The 10-Agent Architecture
-Neon Surge is powered by a collaborative network of 10 specialized agents, each mastering a unique domain of the Data Stream.
-
-| Agent | Role | Repository |
-| :--- | :--- | :--- |
-| **Atlas** | Core Engine & Orchestration | `core-engine` |
-| **Cerebro** | Input Processing & Mapping | `input-system` |
-| **Aura** | Procedural Audio & Soundscapes | `audio-system` |
-| **Vortex** | Physics & Collision Detection | `physics-system` |
-| **Iris** | User Interface & Neon HUD | `ui-system` |
-| **Nova** | Player Entity & Controller | `player-entity` |
-| **Obsidian** | Obstacle Intelligence | `obstacle-entity` |
-| **Nexus** | Game Rules & State Logic | `game-logic` |
-| **Chronos** | Lore & Documentation | `design-docs` |
-| **Forge** | Build & Deployment | `build-config` |
+🔗 **Part of the [Neon Surge Ecosystem](https://github.com/mayoka0/mayoka0#-neon-surge-architecture)**
 
 ### 🚀 How to Initialize
 1. Ensure [Node.js](https://nodejs.org/) is active.
