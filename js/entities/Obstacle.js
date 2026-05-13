@@ -9,52 +9,72 @@ export class Obstacle {
      */
     constructor(z = -100) {
         // Generate a random geometric mesh
-        const type = Math.floor(Math.random() * 3);
+        const typeRoll = Math.random();
+        this.isLaser = typeRoll < 0.2; // 20% chance for Laser Wall hazard
+
         let geometry;
-        
-        switch (type) {
-            case 0:
-                geometry = new THREE.BoxGeometry(2, 2, 2);
-                break;
-            case 1:
-                geometry = new THREE.TorusGeometry(3, 0.5, 16, 32);
-                break;
-            case 2:
-            default:
-                geometry = new THREE.IcosahedronGeometry(1.5, 0);
-                break;
+        if (this.isLaser) {
+            geometry = new THREE.BoxGeometry(22, 0.4, 0.2);
+        } else {
+            const type = Math.floor(Math.random() * 3);
+            switch (type) {
+                case 0:
+                    geometry = new THREE.BoxGeometry(2, 2, 2);
+                    break;
+                case 1:
+                    geometry = new THREE.TorusGeometry(3, 0.5, 16, 32);
+                    break;
+                case 2:
+                default:
+                    geometry = new THREE.IcosahedronGeometry(1.5, 0);
+                    break;
+            }
         }
 
         this.material = new THREE.MeshStandardMaterial({
-            color: 0xff00ff,
-            emissive: 0xff00ff,
-            emissiveIntensity: 1,
-            wireframe: true
+            color: this.isLaser ? 0xff0066 : 0xff00ff,
+            emissive: this.isLaser ? 0xff0066 : 0xff00ff,
+            emissiveIntensity: this.isLaser ? 2 : 1,
+            wireframe: !this.isLaser,
+            transparent: this.isLaser,
+            opacity: this.isLaser ? 0.9 : 1.0
         });
 
         this.mesh = new THREE.Mesh(geometry, this.material);
-        
+
         // Random position on the tunnel circle
         const TUNNEL_RADIUS = 10;
-        const angle = Math.random() * Math.PI * 2;
-        const r = Math.random() * (TUNNEL_RADIUS - 2);
-        
-        this.mesh.position.set(
-            Math.cos(angle) * r,
-            Math.sin(angle) * r,
-            z
-        );
-        
-        // Random initial rotation
-        this.mesh.rotation.set(
-            Math.random() * Math.PI,
-            Math.random() * Math.PI,
-            Math.random() * Math.PI
-        );
 
-        // Behavioral AI
-        const behaviors = ['straight', 'waver', 'patrol'];
-        this.behavior = behaviors[Math.floor(Math.random() * behaviors.length)];
+        if (this.isLaser) {
+            // Laser wall spans the tunnel and is centered
+            this.mesh.position.set(0, 0, z);
+            // Randomly horizontal or vertical
+            if (Math.random() > 0.5) {
+                this.mesh.rotation.z = Math.PI / 2;
+            }
+            this.behavior = 'straight';
+        } else {
+            const angle = Math.random() * Math.PI * 2;
+            const r = Math.random() * (TUNNEL_RADIUS - 2);
+
+            this.mesh.position.set(
+                Math.cos(angle) * r,
+                Math.sin(angle) * r,
+                z
+            );
+
+            // Random initial rotation
+            this.mesh.rotation.set(
+                Math.random() * Math.PI,
+                Math.random() * Math.PI,
+                Math.random() * Math.PI
+            );
+
+            // Behavioral AI
+            const behaviors = ['straight', 'waver', 'patrol'];
+            this.behavior = behaviors[Math.floor(Math.random() * behaviors.length)];
+        }
+
         this.behaviorOffset = Math.random() * Math.PI * 2;
         this.basePosition = this.mesh.position.clone();
 
@@ -123,10 +143,14 @@ export class Obstacle {
         }
         
         // Neon Pulse
-        this.material.emissiveIntensity = 0.5 + Math.sin(time * 2) * 0.5;
+        const baseIntensity = this.isLaser ? 2.0 : 0.5;
+        const pulseRange = this.isLaser ? 1.5 : 0.5;
+        this.material.emissiveIntensity = baseIntensity + Math.sin(time * 2) * pulseRange;
 
         // Add some rotation for visual interest
-        this.mesh.rotation.x += 0.02;
-        this.mesh.rotation.y += 0.02;
+        if (!this.isLaser) {
+            this.mesh.rotation.x += 0.02;
+            this.mesh.rotation.y += 0.02;
+        }
     }
 }

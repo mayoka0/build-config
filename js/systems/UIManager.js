@@ -11,6 +11,7 @@ export class UIManager {
         
         this.initCrosshair();
         this.initLeaderboard();
+        this.initMultiplier();
     }
 
     initCrosshair() {
@@ -59,6 +60,27 @@ export class UIManager {
         if (this.speedElement) {
             this.speedElement.textContent = `SPEED: ${speed.toFixed(1)}x`;
         }
+    }
+
+    initMultiplier() {
+        const existing = document.getElementById('multiplier');
+        if (existing) {
+            this.multiplierElement = existing;
+            return;
+        }
+        this.multiplierElement = document.createElement('div');
+        this.multiplierElement.id = 'multiplier';
+        this.multiplierElement.textContent = 'COMBO: x1';
+        document.body.appendChild(this.multiplierElement);
+    }
+
+    updateMultiplier(multiplier) {
+        if (!this.multiplierElement) return;
+        this.multiplierElement.textContent = `COMBO: x${multiplier}`;
+        
+        this.multiplierElement.classList.remove('multiplier-flash');
+        void this.multiplierElement.offsetWidth;
+        this.multiplierElement.classList.add('multiplier-flash');
     }
 
     saveHighScore(score) {

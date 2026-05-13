@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEON SURGE</title>
+  <script type="module" crossorigin src="/assets/index-B7Vunx_r.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DIpflFrV.css">
+</head>
+<body>
+    <div id="ui">
+        <div id="score">SCORE: 0000</div>
+        <div id="speed">SPEED: 1.0x</div>
+    </div>
+    <div id="game-over">
+        <h1>CONNECTION LOST</h1>
+        <p id="final-score">SCORE: 0</p>
+        <button class="btn" onclick="location.reload()">REBOOT</button>
+    </div>
+    <script src="https://mrdoob.github.io/stats.js/build/stats.min.js"></script>
+    <script>
+        const stats = new Stats();
+        stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+        stats.dom.style.position = 'absolute';
+        stats.dom.style.left = '10px';
+        stats.dom.style.top = '10px';
+        document.body.appendChild(stats.dom);
+        
+        function updateStats() {
+            stats.update();
+            requestAnimationFrame(updateStats);
+        }
+        requestAnimationFrame(updateStats);
+    </script>
+</body>
+</html>

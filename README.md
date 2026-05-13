@@ -1,5 +1,8 @@
 # ⚒️ Neon Surge | Build Config Agent
 
+## 🚀 LATEST UPDATE: "The Combat Update" is now live!
+Experience the new **Shield Dash** and **Laser Walls** in the latest deployment. All systems have been updated and optimized for peak performance in the Data Stream.
+
 ### 🤖 Meet the Agent: Forge
 **Forge, the Deployment Sentinel**, is the master of the "Physical" reality of the Data Stream. While other agents exist within the simulation, Forge builds the simulation itself. From the heat of the CI/CD pipeline to the cold precision of tree-shaking and minification, Forge ensures the Neon Surge experience is lightweight, optimized, and ready for deployment across the Grid.
 
