@@ -1,4 +1,13 @@
+<div align="center">
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=600&size=24&pause=1000&color=7aa2f7&center=true&vCenter=true&width=600&lines=Forge:+Compiling+Digital+Infrastructure...;Optimizing+Build+Pipelines...;Neon+Surge+Forge+Ready." alt="Typing SVG" />
+</div>
+
 # ⚒️ Neon Surge | Build Config Agent
+
+### 📊 Agent Telemetry
+<div align="center">
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=mayoka0&theme=tokyo-night&hide_border=true&area=true" width="100%" alt="Activity Graph" />
+</div>
 
 ## 🚀 LATEST UPDATE: "The Combat Update" is now live!
 Experience the new **Shield Dash** and **Laser Walls** in the latest deployment. All systems have been updated and optimized for peak performance in the Data Stream.
